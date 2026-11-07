@@ -134,6 +134,7 @@ class SettingsActivity : Activity() {
         switch(R.string.adblock_setting, R.string.adblock_setting_sub, prefs::adBlock)
 
         strongerRow()
+        extraRow()
         switch(R.string.auto_update_lists, R.string.auto_update_lists_sub, prefs::autoUpdateLists) { on -> listUpdatesChanged(on) }
         listsRow = nav(R.string.filter_lists, rulesText(blocker.rules.rules)) {
             startActivity(Intent(this, SettingsActivity::class.java).putExtra(PAGE, PAGE_LISTS))
@@ -384,6 +385,24 @@ class SettingsActivity : Activity() {
                 if (isFinishing) return@setStronger
                 (listsRow as? TextView)?.text = rulesText(blocker.rules.rules)
                 blocker.lists.firstOrNull { it.stronger && it.error != null }?.let {
+                    Toast.makeText(this, getString(R.string.blocklist_failed, it.error), Toast.LENGTH_LONG).show()
+                }
+            }
+            if (on && !prefs.autoUpdateLists) suggestListUpdates()
+        }
+    }
+
+    /** The extra lists from TVCouchBrowser in one switch ([FilterList.EXTRA]); downloaded when switched on. */
+    private fun extraRow() {
+        val toggle = Toggle(blocker.extra)
+        row(getString(R.string.extra_lists), getString(R.string.extra_lists_sub), toggle) {
+            val on = !toggle.on
+            toggle.on = on
+            if (on) Toast.makeText(this, R.string.extra_lists_downloading, Toast.LENGTH_LONG).show()
+            blocker.setExtra(on) {
+                if (isFinishing) return@setExtra
+                (listsRow as? TextView)?.text = rulesText(blocker.rules.rules)
+                blocker.lists.firstOrNull { it.extra && it.enabled && it.error != null }?.let {
                     Toast.makeText(this, getString(R.string.blocklist_failed, it.error), Toast.LENGTH_LONG).show()
                 }
             }

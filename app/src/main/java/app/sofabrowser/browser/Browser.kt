@@ -30,6 +30,7 @@ import app.sofabrowser.adblock.AdBlocker
 import app.sofabrowser.adblock.Allowlist
 import app.sofabrowser.adblock.InPageBlocking
 import app.sofabrowser.adblock.NavigationGuard
+import app.sofabrowser.adblock.PageTools
 import app.sofabrowser.adblock.Sites
 
 /**
@@ -142,6 +143,7 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
             false
         }
         PageDownloads.install(view, key)
+        PageTools.youtube(view, blocking("www.youtube.com"))
         InPageBlocking.install(view, key, adBlocker, active = { blocking(pageHost) }) { url ->
             debug("trap link removed: $url")
             adBlocker.countBlocked()
@@ -170,7 +172,7 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
     }
 
     fun applySettings() {
-        web?.let { WebViews.configure(it, prefs); applyGpc(it) }
+        web?.let { WebViews.configure(it, prefs); applyGpc(it); PageTools.youtube(it, blocking("www.youtube.com")) }
     }
 
     @SuppressLint("RequiresFeature") // MULTI_PROFILE is checked via profilesSupported
@@ -186,6 +188,7 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
     @SuppressLint("MissingOnRenderProcessGone")
     private val client = object : WebViewClient() {
         override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+            jsDialogs = 0
             pageHost = AdBlocker.hostOf(url)
             pageUrl = url
             guard.pageStarted()
@@ -320,6 +323,18 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
             return true
         }
 
+        // A page gets a few alert, confirm and prompt boxes; more are dismissed, so one can't trap the remote in a loop.
+        override fun onJsAlert(view: WebView, url: String?, message: String?, result: android.webkit.JsResult) = tooManyDialogs(result)
+        override fun onJsConfirm(view: WebView, url: String?, message: String?, result: android.webkit.JsResult) = tooManyDialogs(result)
+        override fun onJsPrompt(view: WebView, url: String?, message: String?, defaultValue: String?, result: android.webkit.JsPromptResult) =
+            tooManyDialogs(result)
+
+        // "Leave this page?" never traps Back.
+        override fun onJsBeforeUnload(view: WebView, url: String?, message: String?, result: android.webkit.JsResult): Boolean {
+            result.confirm()
+            return true
+        }
+
         override fun getDefaultVideoPoster(): Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
 
         override fun onConsoleMessage(message: android.webkit.ConsoleMessage): Boolean {
@@ -419,6 +434,15 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
 
     private var chainHost: String? = null
 
+    /** Alert, confirm and prompt boxes the page in the main frame has shown. */
+    private var jsDialogs = 0
+
+    private fun tooManyDialogs(result: android.webkit.JsResult): Boolean {
+        if (++jsDialogs <= MAX_JS_DIALOGS || !prefs.adBlock) return false
+        result.cancel()
+        return true
+    }
+
     /**
      * What the last press landed on, from WebView's own hit test (no page script involved): a link's address, "" for an
      * image link (WebView doesn't say where it goes), or null when it wasn't a link.
@@ -461,7 +485,7 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
     fun reload() { guard.userNavigation(); web?.reload() }
 
     /** Whether ad blocking (and with it pop-up and redirect blocking) applies to pages from [pageHost]. */
-    private fun blocking(pageHost: String?) = prefs.adBlock && (pageHost == null || !Allowlist.contains(context, pageHost))
+    fun blocking(pageHost: String?) = prefs.adBlock && (pageHost == null || !Allowlist.contains(context, pageHost))
 
     /** The address blocked last, if "Allow once" may still open it. */
     fun pendingAllow(): String? = guard.pending(SystemClock.uptimeMillis())
@@ -471,6 +495,7 @@ class Browser(private val context: Context, private val prefs: Prefs, private va
 
     companion object {
         private const val PRIVATE_PROFILE = "private"
+        private const val MAX_JS_DIALOGS = 2
         private val PRESS_KEYS = setOf(KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER,
             KeyEvent.KEYCODE_BUTTON_A)
         private const val GPC_SCRIPT =

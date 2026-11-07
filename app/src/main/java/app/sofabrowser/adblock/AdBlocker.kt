@@ -86,6 +86,7 @@ class AdBlocker private constructor(private val context: Context) {
         val url = request.url.toString()
         if (!url.startsWith("http") && !url.startsWith("ws")) return null
         if (pageHost != null && Allowlist.contains(context, pageHost)) return null
+        if (Challenges.exempt(request.url.host, request.url.path)) return null
         val set = rules
         if (pageUrl != null && !pageAllowed(set, pageUrl)) return null
         val target = RequestUrl(url)
@@ -128,6 +129,18 @@ class AdBlocker private constructor(private val context: Context) {
 
     /** Whether EasyList and EasyPrivacy are both on ("Stronger ad blocking" in Settings). */
     val stronger: Boolean get() = lists.filter { it.stronger }.let { it.isNotEmpty() && it.all(FilterList::enabled) }
+
+    /** Whether the extra uBlock Origin, AdGuard and Peter Lowe lists ([FilterList.EXTRA]) are all on. */
+    val extra: Boolean get() = lists.filter { it.extra }.let { it.isNotEmpty() && it.all(FilterList::enabled) }
+
+    /** Switches the extra lists on or off together, downloading them the first time. */
+    fun setExtra(on: Boolean, done: () -> Unit = {}) = change(done) {
+        lists.filter { it.extra }.forEach { list ->
+            edit(list.id) { it.copy(enabled = on) }
+            if (on && !rawFile(list).isFile && !compiledFile(list).isFile) refresh(list)
+        }
+        publish()
+    }
 
     /** Switches EasyList and EasyPrivacy on or off together, downloading them the first time. */
     fun setStronger(on: Boolean, done: () -> Unit = {}) = change(done) {

@@ -21,7 +21,8 @@ import app.sofabrowser.R
  */
 class BrowserMenu(context: Context, private val actions: Actions) : Dialog(context, android.R.style.Theme_Translucent_NoTitleBar) {
 
-    enum class Action { HOME, WATCH, AUTO_WATCH, BACK, FORWARD, RELOAD, FIND, BOOKMARK, PIN, HISTORY, BOOKMARKS, DOWNLOADS, ADBLOCK, ALLOW_ONCE, USER_AGENT, SCROLL, POINTER, ZOOM_OUT, ZOOM_IN, SETTINGS }
+    enum class Action { HOME, WATCH, AUTO_WATCH, BACK, FORWARD, RELOAD, FIND, BOOKMARK, PIN, HISTORY, BOOKMARKS, DOWNLOADS, ADBLOCK, ALLOW_ONCE, USER_AGENT, SCROLL, POINTER, ZOOM_OUT, ZOOM_IN, SETTINGS,
+        CLEAN_UP, PHONE }
 
     interface Actions {
         fun onAddress()
@@ -120,6 +121,7 @@ class BrowserMenu(context: Context, private val actions: Actions) : Dialog(conte
         add(Action.ADBLOCK, R.drawable.ic_shield, R.string.adblock_site)
         // Shown only after a block, next to the shield it belongs with; the menu then opens with it focused.
         add(Action.ALLOW_ONCE, R.drawable.ic_open_in_new, R.string.allow_once)
+        add(Action.CLEAN_UP, R.drawable.ic_delete, R.string.clean_up)
         // With the other choices kept per site; not in private browsing, which saves none.
         add(Action.AUTO_WATCH, R.drawable.ic_autoplay, R.string.auto_watch)
         add(Action.USER_AGENT, R.drawable.ic_desktop_windows, R.string.user_agent)
@@ -129,6 +131,7 @@ class BrowserMenu(context: Context, private val actions: Actions) : Dialog(conte
         zoomLabel = Ui.text(context, 26, Ui.p.textMid).apply { gravity = Gravity.CENTER; text = context.getString(R.string.percent, 100) }
         row.addView(zoomLabel, LinearLayout.LayoutParams(100.px, 80.px))
         add(Action.ZOOM_IN, R.drawable.ic_zoom_in, R.string.zoom_in)
+        add(Action.PHONE, R.drawable.ic_smartphone, R.string.phone_remote)
         add(Action.SETTINGS, R.drawable.ic_settings, R.string.settings)
 
         root.addView(HorizontalScrollView(context).apply {

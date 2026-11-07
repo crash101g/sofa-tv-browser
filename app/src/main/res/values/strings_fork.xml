@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings for the features ported from TVCouchBrowser, kept apart from Sofa's own so updates merge cleanly. -->
+<resources>
+    <!-- Menu -->
+    <string name="clean_up">Clean up</string>
+    <string name="phone_remote">Phone</string>
+
+    <!-- Clean up -->
+    <string name="clean_up_now">Clean up page</string>
+    <string name="remove_element">Remove element</string>
+    <string name="clean_up_auto_off">Clean up this site automatically: off</string>
+    <string name="clean_up_auto_on">Clean up this site automatically: on</string>
+    <string name="clean_up_auto_added">This site is cleaned up every time it loads</string>
+    <string name="clean_up_auto_removed">This site is no longer cleaned up automatically</string>
+    <plurals name="bring_back_removed">
+        <item quantity="one">Bring back %d removed element</item>
+        <item quantity="other">Bring back %d removed elements</item>
+    </plurals>
+    <string name="removed_brought_back">Removed elements are back</string>
+    <string name="cleaned_up">Cleaned up the page</string>
+    <string name="nothing_to_clean">Nothing to clean up here</string>
+    <string name="remove_element_point">Point at what to remove, then press OK. Back cancels.</string>
+    <string name="remove_element_focus">Press OK to remove what has focus. Back cancels.</string>
+    <string name="remove_element_cancelled">Nothing removed</string>
+    <string name="nothing_to_remove">Nothing to remove there</string>
+    <string name="removed_remembered">Removed, also next time. Clean up → Bring back undoes it.</string>
+    <string name="removed_this_page">Removed (this page only)</string>
+
+    <!-- Phone -->
+    <string name="phone_pair_title">Use your phone as a remote</string>
+    <string name="phone_pair_text">Scan this with your phone\'s camera. A page opens where you can open websites, type into the TV, use a trackpad and a remote. Nothing to install.\n\nThe phone must be on the same Wi-Fi, and it works while Sofa is open. It is plain HTTP on your home network: don\'t send passwords through it on a network you don\'t trust.\n\nAddress for a “Send to TV” shortcut:\n%1$s</string>
+    <string name="phone_done">Done</string>
+    <string name="phone_forget">Forget paired phones</string>
+    <string name="phone_forgotten">Paired phones forgotten; the phone page is off until you pair again</string>
+    <string name="phone_no_network">Not connected to a network</string>
+    <string name="phone_no_field">Select a text box on the TV first</string>
+    <string name="phone_trackpad_connected">Phone trackpad connected</string>
+
+    <!-- Settings -->
+    <string name="extra_lists">Extra filter lists</string>
+    <string name="extra_lists_sub">Adds uBlock Origin\'s own lists (ads, privacy, badware, quick fixes, unbreak), AdGuard Popups and Peter Lowe\'s list. They block mostly whole servers, so they cost little memory each; downloaded from their publishers when switched on.</string>
+    <string name="extra_lists_downloading">Downloading the extra filter lists…</string>
+</resources>

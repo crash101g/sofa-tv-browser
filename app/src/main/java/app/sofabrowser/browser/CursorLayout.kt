@@ -98,7 +98,8 @@ class CursorLayout(context: Context) : FrameLayout(context) {
         lastActivity = SystemClock.uptimeMillis() - HIDE_AFTER_MS
     }
 
-    val visible get() = cursorEnabled && SystemClock.uptimeMillis() - lastActivity < HIDE_AFTER_MS
+    val visible get() = (cursorEnabled || SystemClock.uptimeMillis() < padUntil) &&
+        SystemClock.uptimeMillis() - lastActivity < HIDE_AFTER_MS
 
     override fun onSizeChanged(nw: Int, nh: Int, ow: Int, oh: Int) {
         super.onSizeChanged(nw, nh, ow, oh)
@@ -332,6 +333,7 @@ class CursorLayout(context: Context) : FrameLayout(context) {
     private fun cancelGestures() {
         removeCallbacks(holdCheck)
         removeCallbacks(holdResult)
+        cancelPad()
         endDrag()
         if (touchDown) touch(MotionEvent.ACTION_CANCEL)
         okHeld = false
@@ -387,6 +389,100 @@ class CursorLayout(context: Context) : FrameLayout(context) {
         canvas.drawCircle(pos.x, pos.y, r + 3f, outline)
     }
 
+    // Phone trackpad (phone.PhoneRemote): the same pointer, moved and pressed from a phone. It shows on use even where
+    // the D-pad goes to the page, and its presses are real touches, which captchas and press-and-hold checks need.
+
+    /** Where the pointer is, in this view's pixels. */
+    val pointerX get() = pos.x
+    val pointerY get() = pos.y
+
+    private var padUntil = 0L
+    private var padPressed = false
+
+    private fun padShow() {
+        val now = SystemClock.uptimeMillis()
+        padUntil = now + HIDE_AFTER_MS
+        lastActivity = now
+        if (scrollMode) setScrollMode(false)
+        invalidate()
+        postDelayed({ invalidate() }, HIDE_AFTER_MS + 50)
+    }
+
+    /** Moves the pointer by ([dx], [dy]) px; pushing against an edge scrolls, as with the D-pad. */
+    fun padMove(dx: Float, dy: Float) {
+        padShow()
+        val ox = pos.x
+        val oy = pos.y
+        pos.x = (pos.x + dx).coerceIn(0f, w - 1)
+        pos.y = (pos.y + dy).coerceIn(0f, h - 1)
+        if (padPressed) { touch(MotionEvent.ACTION_MOVE); return }
+        if (pos.x != ox || pos.y != oy) hover()
+        val sx = if ((pos.x >= w - 1 && dx > 0) || (pos.x <= 0f && dx < 0)) dx else 0f
+        val sy = if ((pos.y >= h - 1 && dy > 0) || (pos.y <= 0f && dy < 0)) dy else 0f
+        if (sx != 0f || sy != 0f) padScroll(sx, sy)
+    }
+
+    /** Scrolls whatever is under the pointer by ([dx], [dy]) px. */
+    fun padScroll(dx: Float, dy: Float) {
+        padShow()
+        if (padPressed || touchDown) return
+        dragScroll(dx, dy)
+        removeCallbacks(padScrollEnd)
+        postDelayed(padScrollEnd, PAD_SCROLL_END_MS)
+    }
+
+    private val padScrollEnd = Runnable { endDrag() }
+
+    /** A tap at the pointer. */
+    fun padTap() {
+        padShow()
+        if (padPressed || touchDown) return
+        endDrag()
+        touch(MotionEvent.ACTION_DOWN)
+        postDelayed({ if (touchDown && !padPressed) { touch(MotionEvent.ACTION_UP); invalidate() } }, PAD_TAP_MS)
+    }
+
+    /** Presses at the pointer and keeps pressing, for drags and press-and-hold buttons, until [padRelease]. */
+    fun padPress() {
+        padShow()
+        if (padPressed) return
+        removeCallbacks(padHoldResult)
+        endDrag()
+        if (touchDown) touch(MotionEvent.ACTION_CANCEL)
+        padPressed = true
+        touch(MotionEvent.ACTION_DOWN)
+    }
+
+    fun padRelease() {
+        if (!padPressed) return
+        padPressed = false
+        touch(MotionEvent.ACTION_UP)
+        invalidate()
+    }
+
+    /** A long press: the link or image menu when there is one under the pointer, else the page's own long press. */
+    fun padLongPress() {
+        padShow()
+        if (padPressed || touchDown) return
+        endDrag()
+        touch(MotionEvent.ACTION_DOWN)
+        postDelayed(padHoldResult, HIT_TEST_WAIT_MS)
+    }
+
+    private val padHoldResult = Runnable {
+        if (touchDown) touch(MotionEvent.ACTION_CANCEL)
+        if (listener?.onHold() != true) {
+            touch(MotionEvent.ACTION_DOWN)
+            postDelayed({ if (touchDown && !padPressed) { touch(MotionEvent.ACTION_UP); invalidate() } }, PAD_LONG_PRESS_MS)
+        }
+    }
+
+    private fun cancelPad() {
+        removeCallbacks(padHoldResult)
+        removeCallbacks(padScrollEnd)
+        padPressed = false
+    }
+
     /** Hides the pointer until the next key, e.g. while an overlay is open. */
     fun hide() {
         cancelGestures()
@@ -408,5 +504,9 @@ class CursorLayout(context: Context) : FrameLayout(context) {
         private const val NUDGE = 6f
         /** A stick pushed all the way moves the pointer at this share of the D-pad's top speed. */
         private const val STICK_SPEED = 0.8f
+        private const val PAD_TAP_MS = 40L
+        private const val PAD_LONG_PRESS_MS = 700L
+        /** A trackpad scroll lets go of the page once the fingers rest this long. */
+        private const val PAD_SCROLL_END_MS = 150L
     }
 }

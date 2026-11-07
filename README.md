@@ -1,5 +1,9 @@
 # Sofa TV Browser
 
+> **This is a fork** of [Sofa TV Browser](https://github.com/sonalder-darlene/sofa-tv-browser) that adds a phone
+> remote and trackpad, Clean up page, Remove element and more ad blocking from
+> [TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser). See [FORK.md](FORK.md); the rest of this README is Sofa's.
+
 A small, private web browser for Android TV and Google TV, made to be used with the remote. On the TV it is
 called Sofa.
 

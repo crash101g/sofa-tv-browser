@@ -79,6 +79,36 @@ bring Guava and `failureaccess` (https://github.com/google/guava, Copyright The 
 concurrent-futures, core, exifinterface, lifecycle, versionedparcelable), all compiled into the app and all
 licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 
+## TVCouchBrowser (phone remote, Clean up page, Remove element)
+
+The phone remote and trackpad (`app/src/main/java/app/sofabrowser/phone/`, `app/src/main/assets/phone.html`), Clean
+up page, Remove element and the YouTube player script (`adblock/PageTools.kt`, `adblock/RemovedElements.kt`,
+`adblock/CleanUp.kt`), the captcha exemption (`adblock/Challenges.kt`) and the list of extra filter lists come from
+[TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser), adapted for Sofa.
+
+> MIT License
+>
+> Copyright (c) 2026 crash101g
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+> documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+> the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+> to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+>
+> The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+> the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+> THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+> CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+> IN THE SOFTWARE.
+
+## ZXing (`com.google.zxing:core`)
+
+The pairing QR code is drawn with [ZXing](https://github.com/zxing/zxing) core, licensed under the Apache License,
+Version 2.0 (see LICENSE-APACHE-2.0.txt).
+
 ## Search engine icons
 
 `app/src/main/res/drawable-nodpi/engine_*.webp` are the icons the search engines publish on their own sites,

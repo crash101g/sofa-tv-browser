@@ -28,6 +28,9 @@ data class FilterList(
     /** One of the lists behind "Stronger ad blocking", which go stale within days. */
     val stronger: Boolean get() = id in STRONGER
 
+    /** One of the extra lists from TVCouchBrowser: uBlock Origin's own, AdGuard Popups and Peter Lowe's. */
+    val extra: Boolean get() = id in EXTRA
+
     /** How long a download stays fresh for automatic updates: what the list asks for, between one and seven days. */
     val refreshHours: Int get() = (expiresHours.takeIf { it > 0 } ?: DEFAULT_REFRESH_HOURS).coerceIn(24, 7 * 24)
 
@@ -54,6 +57,30 @@ data class FilterList(
         const val EASYLIST_URL = "https://easylist.to/easylist/easylist.txt"
         const val EASYPRIVACY_URL = "https://easylist.to/easylist/easyprivacy.txt"
         val STRONGER = setOf(EASYLIST, EASYPRIVACY)
+
+        private const val UBO = "https://ublockorigin.github.io/uAssets/filters/"
+
+        /**
+         * The lists TVCouchBrowser blocks with besides EasyList and EasyPrivacy, chosen for the most blocking per MB on a
+         * 1 GB TV: mostly whole servers. Off until "Extra filter lists" in Settings, or one by one in Filter lists.
+         */
+        val EXTRA_LISTS = listOf(
+            FilterList("ubo-filters", "uBlock filters", UBO + "filters.txt", enabled = false),
+            FilterList("ubo-privacy", "uBlock filters – Privacy", UBO + "privacy.txt", enabled = false),
+            FilterList("ubo-badware", "uBlock filters – Badware risks", UBO + "badware.txt", enabled = false),
+            FilterList("ubo-quick-fixes", "uBlock filters – Quick fixes", UBO + "quick-fixes.txt", enabled = false),
+            FilterList("ubo-unbreak", "uBlock filters – Unbreak", UBO + "unbreak.txt", enabled = false),
+            FilterList("adguard-popups", "AdGuard Popups", "https://filters.adtidy.org/extension/ublock/filters/19.txt", enabled = false),
+            FilterList("peter-lowe", "Peter Lowe's ad and tracking servers",
+                "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=adblockplus&showintro=0&mimetype=plaintext", enabled = false),
+        )
+        val EXTRA = EXTRA_LISTS.map { it.id }.toSet()
+
+        /** Mostly element hiding, which costs far more memory per rule, and largely covered by "Clean up page". */
+        val ANNOYANCE_LISTS = listOf(
+            FilterList("ubo-annoyances-cookies", "uBlock filters – Cookie notices", UBO + "annoyances-cookies.txt", enabled = false),
+            FilterList("ubo-annoyances-others", "uBlock filters – Other annoyances", UBO + "annoyances-others.txt", enabled = false),
+        )
         private const val DEFAULT_REFRESH_HOURS = 4 * 24
 
         /**
@@ -65,7 +92,7 @@ data class FilterList(
             FilterList(POPUPS, "HaGeZi Pop-Up Ads", POPUPS_URL, AdBlocker.POPUP_ASSET),
             FilterList(EASYLIST, "EasyList", EASYLIST_URL, enabled = false),
             FilterList(EASYPRIVACY, "EasyPrivacy", EASYPRIVACY_URL, enabled = false),
-        )
+        ) + EXTRA_LISTS + ANNOYANCE_LISTS
 
         /**
          * [stored] lists with the ones every install has added where missing; a list the user added by the address of

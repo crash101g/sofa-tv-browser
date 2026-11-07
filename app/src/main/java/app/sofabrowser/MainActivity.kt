@@ -40,6 +40,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.webkit.WebViewFeature
 import app.sofabrowser.adblock.Allowlist
+import app.sofabrowser.adblock.CleanUp
 import app.sofabrowser.browser.Browser
 import app.sofabrowser.browser.CursorLayout
 import app.sofabrowser.browser.Decoders
@@ -89,6 +90,7 @@ import app.sofabrowser.ui.SetupActivity
 import app.sofabrowser.ui.Ui
 import app.sofabrowser.ui.px
 import app.sofabrowser.update.Updater
+import app.sofabrowser.phone.PhoneRemote
 import java.util.Locale
 import kotlin.concurrent.thread
 import kotlin.math.pow
@@ -111,6 +113,8 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
     private var menu: BrowserMenu? = null
     private lateinit var findBar: FindBar
     private val voiceInput by lazy { VoiceInput(this, findVoiceListener) }
+    private lateinit var cleanUp: CleanUp
+    private val phone by lazy { PhoneRemote(this, phoneHost) }
 
     private var fullscreenCallback: WebChromeClient.CustomViewCallback? = null
     private var loading = false
@@ -150,6 +154,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
         val root = FrameLayout(this)
         browserLayer = FrameLayout(this).apply { visibility = View.GONE }
         cursor = CursorLayout(this).apply { listener = this@MainActivity }
+        cleanUp = CleanUp(this, cursor, { web }, browser::blocking)
         browserLayer.addView(cursor, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         progress = View(this).apply { setBackgroundColor(Ui.BRAND); pivotX = 0f; scaleX = 0f }
         browserLayer.addView(progress, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 6.px, Gravity.TOP))
@@ -266,6 +271,8 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
             }
             return super.dispatchKeyEvent(event)
         }
+        // "Remove element" waits for OK (or Back to cancel) before the pointer and the menu get them.
+        if (cleanUp.key(event)) return true
         val down = event.action == KeyEvent.ACTION_DOWN
         when (event.keyCode) {
             KeyEvent.KEYCODE_BACK -> {
@@ -592,6 +599,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
                 Allowlist.set(this, host, allowed)
                 toast(if (allowed) R.string.adblock_site_disabled else R.string.adblock_site_enabled)
                 menu?.dismiss()
+                browser.applySettings()
                 browser.reload()
             }
             BrowserMenu.Action.USER_AGENT -> pickUserAgent()
@@ -607,6 +615,8 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
             BrowserMenu.Action.ZOOM_OUT -> if (zoomStep > -4) { w.zoomBy(0.8f); zoomStep-- }
             BrowserMenu.Action.SETTINGS -> { menu?.dismiss(); startActivity(Intent(this, SettingsActivity::class.java)) }
             BrowserMenu.Action.DOWNLOADS -> { menu?.dismiss(); onDownloads() }
+            BrowserMenu.Action.CLEAN_UP -> { menu?.dismiss(); cleanUp.dialog() }
+            BrowserMenu.Action.PHONE -> { menu?.dismiss(); phone.pairDialog() }
         }
         menu?.takeIf { it.isShowing }?.update(menuState())
     }
@@ -659,6 +669,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
     override fun onToggleAdBlock() {
         prefs.adBlock = !prefs.adBlock
         toast(if (prefs.adBlock) R.string.adblock_on else R.string.adblock_off)
+        browser.applySettings()
         home.refresh(prefs.privateMode, prefs.adBlock)
     }
 
@@ -760,7 +771,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
         progress.visibility = View.GONE
         progress.scaleX = 0f
         menu?.takeIf { it.isShowing }?.update(menuState())
-        if (Browser.isWebUrl(url)) maybeAutoWatch(url)
+        if (Browser.isWebUrl(url)) { maybeAutoWatch(url); cleanUp.pageFinished(url) }
     }
 
     override fun onProgress(percent: Int) {
@@ -1685,6 +1696,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
     override fun onStart() {
         super.onStart()
         started = true
+        phone.start()
         applyKeepAwake()
         DownloadEngine.addListener(downloadsListener)
         downloadsListener()
@@ -1703,6 +1715,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
             nativeTries = 0
         }
         started = false
+        phone.stop()
         stopAutoWatch()
         applyKeepAwake()
         DownloadEngine.removeListener(downloadsListener)
@@ -1767,6 +1780,7 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
 
     override fun onDestroy() {
         voiceInput.destroy()
+        phone.destroy()
         sofaPlayer.release()
         if (isFinishing) {
             val wasPrivate = browser.privateMode && !browser.isolated
@@ -1798,6 +1812,23 @@ class MainActivity : Activity(), HomeView.Listener, Browser.Host, BrowserMenu.Ac
             .create()
         d.setOnShowListener { d.getButton(AlertDialog.BUTTON_POSITIVE).requestFocus() }
         d.show()
+    }
+
+    // Phone remote (phone.PhoneRemote)
+
+    private val phoneHost = object : PhoneRemote.Host {
+        override val cursor get() = this@MainActivity.cursor
+        override val web get() = this@MainActivity.web
+        override fun pageInFront() = !homeShown && fullscreen.visibility != View.VISIBLE && hasWindowFocus() &&
+            browserLayer.visibility == View.VISIBLE && !findBar.hasFocus()
+        override fun openFromPhone(url: String) {
+            menu?.dismiss()
+            if (findBar.showing) closeFind()
+            openUrl(url)
+        }
+        override fun zoom(zoomIn: Boolean) = onAction(if (zoomIn) BrowserMenu.Action.ZOOM_IN else BrowserMenu.Action.ZOOM_OUT)
+        override fun removeAtPointer() = cleanUp.removeAtPointer()
+        override fun cleanUp() = cleanUp.cleanUp(quiet = false)
     }
 
     // Helpers

@@ -11,20 +11,29 @@ class FilterListTest {
     @Test
     fun aNewInstallHasTheTwoBundledListsOnAndEasyListAndEasyPrivacyOff() {
         val lists = FilterList.migrate(null, downloaded = false)
-        assertEquals(listOf(FilterList.STEVENBLACK, FilterList.POPUPS, FilterList.EASYLIST, FilterList.EASYPRIVACY), lists.map { it.id })
+        assertEquals(listOf(FilterList.STEVENBLACK, FilterList.POPUPS, FilterList.EASYLIST, FilterList.EASYPRIVACY), lists.take(4).map { it.id })
+        assertTrue(lists.drop(4).none { it.enabled || it.bundled })
         assertTrue(lists.filter { it.bundled }.all { it.enabled })
         assertTrue(lists.filter { it.stronger }.none { it.enabled || it.bundled })
     }
 
     @Test
+    fun theExtraListsStartOffAndAreNotStronger() {
+        val lists = FilterList.defaults()
+        assertEquals(FilterList.EXTRA, lists.filter { it.extra }.map { it.id }.toSet())
+        assertTrue(lists.filter { it.extra }.none { it.enabled || it.bundled || it.stronger })
+        assertEquals(lists.size, lists.map { it.id }.toSet().size)
+    }
+
+    @Test
     fun theDefaultAddressFromSofa11IsNotACustomList() {
-        assertEquals(4, FilterList.migrate(FilterList.STEVENBLACK_URL, downloaded = true).size)
+        assertEquals(FilterList.defaults().size, FilterList.migrate(FilterList.STEVENBLACK_URL, downloaded = true).size)
     }
 
     @Test
     fun easyListSetAsTheAddressInSofa11IsTheEasyListSwitchTurnedOn() {
         val lists = FilterList.migrate(FilterList.EASYLIST_URL, downloaded = true)
-        assertEquals(4, lists.size)
+        assertEquals(FilterList.defaults().size, lists.size)
         assertTrue(lists.single { it.id == FilterList.EASYLIST }.enabled)
         assertFalse(lists.single { it.id == FilterList.STEVENBLACK }.enabled)
     }
@@ -38,7 +47,7 @@ class FilterListTest {
         assertEquals(9, lists.single { it.id == FilterList.EASYLIST }.rules)
         assertTrue(lists.single { it.id == FilterList.EASYLIST }.enabled)
         assertFalse(lists.single { it.id == FilterList.EASYPRIVACY }.enabled)
-        assertEquals(4, lists.size)
+        assertEquals(FilterList.defaults().size, lists.size)
         assertEquals(stored.take(2) + FilterList.defaults().drop(2), FilterList.complete(FilterList.defaults().take(2)).first)
     }
 
