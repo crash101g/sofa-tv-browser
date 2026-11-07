@@ -1,8 +1,16 @@
-# Sofa TV Browser
+# Sofa TV Browser + TVCouchBrowser features
 
-> **This is a fork** of [Sofa TV Browser](https://github.com/sonalder-darlene/sofa-tv-browser) that adds a phone
-> remote and trackpad, Clean up page, Remove element and more ad blocking from
-> [TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser). See [FORK.md](FORK.md); the rest of this README is Sofa's.
+> **This is a fork of [Sofa TV Browser](https://github.com/sonalder-darlene/sofa-tv-browser)** by sonalder-darlene,
+> with extra features from my own Android TV browser, [TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser):
+>
+> - **Your phone as a remote, keyboard and trackpad:** scan a QR code, nothing to install on the phone
+> - **Clean up page** and **Remove element** for overlays, cookie walls and ads the filter lists miss
+> - **Extra filter lists** (uBlock Origin, AdGuard Popups, Peter Lowe), YouTube ad stripping, captchas never blocked
+>
+> **Download:** [latest release](https://github.com/crash101g/sofa-tv-browser/releases/latest) ·
+> **What's different and how it tracks Sofa:** [FORK.md](FORK.md)
+>
+> The fork follows upstream Sofa's new versions. Everything below is Sofa's own README.
 
 A small, private web browser for Android TV and Google TV, made to be used with the remote. On the TV it is
 called Sofa.
