@@ -21,6 +21,22 @@ class ReleasesTest {
     }
 
     @Test
+    fun comparesForkReleasesOnTheSameSofaVersion() {
+        assertTrue(Releases.isNewer("v1.2.4-tvcouch.2", "1.2.4-tvcouch.1"))
+        assertTrue(Releases.isNewer("v1.2.4-tvcouch.10", "1.2.4-tvcouch.9"))
+        assertTrue(Releases.isNewer("v1.2.4-tvcouch.1", "1.2.4"))
+        assertFalse(Releases.isNewer("v1.2.4-tvcouch.1", "1.2.4-tvcouch.1"))
+        assertFalse(Releases.isNewer("v1.2.4-tvcouch.1", "1.2.4-tvcouch.2"))
+        // The Sofa version still comes first.
+        assertTrue(Releases.isNewer("v1.2.5-tvcouch.1", "1.2.4-tvcouch.7"))
+        assertFalse(Releases.isNewer("v1.2.4-tvcouch.7", "1.2.5-tvcouch.1"))
+        // A test build's suffix doesn't hide its fork release.
+        assertFalse(Releases.isNewer("v1.2.4-tvcouch.1", "1.2.4-tvcouch.1-test+1a2b3c4"))
+        assertTrue(Releases.isNewer("v1.2.4-tvcouch.2", "1.2.4-tvcouch.1-test+1a2b3c4"))
+        assertEquals(0, Releases.forkRelease("1.2.4-beta1"))
+    }
+
+    @Test
     fun picksTheReleaseApk() {
         val named = Releases.Asset("sofa-1.2.0.apk", "u1", 1, null)
         val other = Releases.Asset("sofa-1.2.0-debug.apk", "u2", 1, null)

@@ -9,7 +9,11 @@ object Releases {
     fun parts(version: String): List<Int> =
         Regex("""\d+(?:\.\d+)*""").find(version)?.value?.split('.')?.map { it.toIntOrNull() ?: 0 } ?: emptyList()
 
-    /** Whether [candidate] is a later version than [current]; missing parts count as 0, so 1.1 equals 1.1.0. */
+    /**
+     * Whether [candidate] is a later version than [current]; missing parts count as 0, so 1.1 equals 1.1.0. On the same
+     * Sofa version, the fork's own release number decides: 1.2.4-tvcouch.2 is newer than 1.2.4-tvcouch.1, which is newer
+     * than plain 1.2.4.
+     */
     fun isNewer(candidate: String, current: String): Boolean {
         val a = parts(candidate)
         val b = parts(current)
@@ -19,8 +23,15 @@ object Releases {
             val y = b.getOrElse(i) { 0 }
             if (x != y) return x > y
         }
-        return false
+        return forkRelease(candidate) > forkRelease(current)
     }
+
+    /** The fork's release number on top of a Sofa version: 2 for "1.2.4-tvcouch.2", 0 without one. */
+    fun forkRelease(version: String): Int =
+        Regex("""-$FORK_TAG\.(\d+)""").find(version)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+
+    /** The suffix fork releases carry after Sofa's own version. */
+    const val FORK_TAG = "tvcouch"
 
     /** The release's APK: "sofa-<version>.apk" when attached, otherwise the only APK there is. */
     fun pickApk(assets: List<Asset>, version: String): Asset? {

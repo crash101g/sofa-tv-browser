@@ -14,6 +14,8 @@
 > **Sofa (fork)**, and it updates only from this fork's releases. Report problems with it
 > [here](https://github.com/crash101g/sofa-tv-browser/issues), not to the original project.
 >
+> **Tested on** the Walmart onn 4K Pro Streaming Device (board jarvis2) and the TCL 40Q3K.
+>
 > The fork follows upstream Sofa's new versions. Everything below is Sofa's own README.
 
 A small, private web browser for Android TV and Google TV, made to be used with the remote. On the TV it is

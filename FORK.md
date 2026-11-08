@@ -9,6 +9,8 @@ Settings → About, is signed with its own key and updates only from
 [this fork's releases](https://github.com/crash101g/sofa-tv-browser/releases). Report problems with it
 [here](https://github.com/crash101g/sofa-tv-browser/issues).
 
+**Tested on:** the Walmart onn 4K Pro Streaming Device (board jarvis2) and the TCL 40Q3K.
+
 ## What it adds
 
 ### Your phone as a remote, keyboard and trackpad
@@ -99,3 +101,18 @@ JDK 17 or newer and the Android SDK with platform 36 and build-tools 36.1.0:
 
     ./gradlew assembleStandardDebug    # app/build/outputs/apk/standard/debug/app-standard-debug.apk
     ./gradlew testStandardDebugUnitTest
+
+## Releasing
+
+Fork releases are numbered after the Sofa version they are built on: `1.2.4-tvcouch.2` is the fork's second release
+on Sofa 1.2.4, and its versionCode is 1020402. The updater offers a higher fork number on the same Sofa version, and
+any newer Sofa version.
+
+Write the release's `## 1.2.4-tvcouch.2 (date)` section in CHANGELOG.md and its store changelog in
+`fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`, then:
+
+    tools/release.sh 1.2.4-tvcouch.2 --dry-run   # builds and checks; the APK and notes land in build/release/
+    tools/release.sh 1.2.4-tvcouch.2             # the same, then commits, tags, pushes and publishes the release
+
+It needs `keystore.properties` and a logged-in `gh`, and stops before publishing if the APK has the wrong version,
+isn't signed with the key the updater expects, or doesn't update from this fork.

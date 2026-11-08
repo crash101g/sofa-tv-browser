@@ -47,7 +47,9 @@ android {
         applicationId = "app.sofabrowser"
         minSdk = 24
         targetSdk = 36
-        // MAJOR * 10000 + MINOR * 100 + PATCH, so 1.2.3 is 10203. Keep both literal: F-Droid reads them from here.
+        // Fork releases: (MAJOR * 10000 + MINOR * 100 + PATCH) * 100 + fork release, so 1.2.4-tvcouch.2 is 1020402
+        // (releases up to 1.2.4-tvcouch.1 used Sofa's 10204 form; any higher code is fine). tools/release.sh sets both.
+        // Keep both literal: F-Droid reads them from here.
         versionCode = 10204
         versionName = "1.2.4-tvcouch.1"
     }
