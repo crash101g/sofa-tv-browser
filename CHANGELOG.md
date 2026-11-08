@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.3-tvcouch.1 (2026-11-08)
+
+Fork of Sofa 1.2.2 with features from [TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser); see FORK.md.
+
+- **Phone remote, keyboard and trackpad:** menu → Phone shows a QR code to scan on the same Wi-Fi.
+- **Clean up** in the menu: Clean up page, Remove element (remembered per site), and automatic clean-up per site.
+- **Extra filter lists** switch in Settings (uBlock Origin lists, AdGuard Popups, Peter Lowe), off by default.
+- YouTube ad stripping, captchas never blocked, alert loops capped, and "Leave this page?" never traps Back.
+- **Updates** now come from this fork's GitHub releases, for copies signed with the fork's key.
+
 ## 1.2.2 (2026-10-30)
 
 **Sofa Player**
