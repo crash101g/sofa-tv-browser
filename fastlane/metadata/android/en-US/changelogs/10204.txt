@@ -1,0 +1,1 @@
+Clearly marked as an unofficial fork: it shows as Sofa (fork) on the TV, with a FORK banner, and Settings → About says it is not made or supported by Sofa's developer.

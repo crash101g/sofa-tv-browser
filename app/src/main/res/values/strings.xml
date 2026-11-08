@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sofa</string>
+    <string name="app_name">Sofa (fork)</string>
     <string name="about_text">A lightweight, private web browser for Android TV and Google TV.\n\nSofa has no accounts, no analytics, no ads and no servers of its own. Your history, bookmarks and settings stay on this device. The only connections it makes are to the sites you visit and, if you ask it to, your search engine\'s suggestions and the filter list addresses you choose.</string>
     <string name="version">Version %s</string>
 

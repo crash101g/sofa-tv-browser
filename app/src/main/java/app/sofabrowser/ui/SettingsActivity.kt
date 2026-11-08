@@ -529,7 +529,7 @@ class SettingsActivity : Activity() {
 
     private fun about() {
         dialog().setTitle(getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME)
-            .setMessage(getString(R.string.about_text) +
+            .setMessage(getString(R.string.about_fork) + "\n\n" + getString(R.string.about_text) +
                 (if (Updater.offered(this)) " " + getString(R.string.about_updates) else "") +
                 "\n\n" + getString(R.string.about_engine, WebViews.engine(this).label) + "\n" + getString(R.string.about_video) +
                 "\n\n" + getString(R.string.about_license))

@@ -1,1 +1,1 @@
-Private web browser for Android TV and Google TV
+Unofficial Sofa TV browser fork: phone remote, Clean up, more ad blocking

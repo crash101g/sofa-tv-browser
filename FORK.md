@@ -4,6 +4,11 @@ This is a fork of [Sofa TV Browser](https://github.com/sonalder-darlene/sofa-tv-
 [TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser) added. Everything else is Sofa as upstream ships it,
 and the fork follows upstream's new versions (see [Keeping up with Sofa](#keeping-up-with-sofa)).
 
+It is **unofficial**: Sofa's developer doesn't make or support it. It shows as **Sofa (fork)** on the TV, says so in
+Settings → About, is signed with its own key and updates only from
+[this fork's releases](https://github.com/crash101g/sofa-tv-browser/releases). Report problems with it
+[here](https://github.com/crash101g/sofa-tv-browser/issues).
+
 ## What it adds
 
 ### Your phone as a remote, keyboard and trackpad

@@ -10,6 +10,10 @@
 > **Download:** [latest release](https://github.com/crash101g/sofa-tv-browser/releases/latest) ·
 > **What's different and how it tracks Sofa:** [FORK.md](FORK.md)
 >
+> **Not the official Sofa.** This fork is not made or supported by Sofa's developer. On the TV it is called
+> **Sofa (fork)**, and it updates only from this fork's releases. Report problems with it
+> [here](https://github.com/crash101g/sofa-tv-browser/issues), not to the original project.
+>
 > The fork follows upstream Sofa's new versions. Everything below is Sofa's own README.
 
 A small, private web browser for Android TV and Google TV, made to be used with the remote. On the TV it is

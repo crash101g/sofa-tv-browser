@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Strings for the features ported from TVCouchBrowser, kept apart from Sofa's own so updates merge cleanly. -->
 <resources>
+    <!-- About: says plainly this is not the official Sofa -->
+    <string name="about_fork">This is an unofficial fork of Sofa TV Browser, with extra features from TVCouchBrowser: the phone remote and trackpad, Clean up page, Remove element and extra filter lists. It is not made or supported by Sofa\'s developer.\n\nFork: github.com/crash101g/sofa-tv-browser\nOriginal Sofa: github.com/sonalder-darlene/sofa-tv-browser</string>
+
     <!-- Menu -->
     <string name="clean_up">Clean up</string>
     <string name="phone_remote">Phone</string>

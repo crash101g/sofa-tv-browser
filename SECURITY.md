@@ -1,5 +1,11 @@
 # Security
 
+> **This is a fork.** Report problems with this fork, including anything in the features it adds (phone remote,
+> Clean up, extra filter lists) and its releases and updater, to **this fork**:
+> [report a vulnerability](https://github.com/crash101g/sofa-tv-browser/security/advisories/new) or
+> [open an issue](https://github.com/crash101g/sofa-tv-browser/issues). Please don't send them to the original Sofa
+> project, which doesn't make or support this fork. Below is Sofa's own policy, which the fork follows.
+
 ## Reporting a problem
 
 Please report security problems privately, not in a public issue: on GitHub, open the repository's **Security**

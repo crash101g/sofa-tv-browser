@@ -1,3 +1,5 @@
+This is an unofficial fork of Sofa TV Browser (github.com/sonalder-darlene/sofa-tv-browser), not made or supported by Sofa's developer. It adds features from TVCouchBrowser: your phone as a remote, keyboard and trackpad; Clean up page and Remove element; and extra filter lists. Fork: github.com/crash101g/sofa-tv-browser
+
 Sofa is a lightweight web browser made for the TV remote, with a mouse pointer, a menu on the Back key and a home screen of your own sites. It has no ads, analytics, accounts or servers of its own.
 
 Remote-control browsing

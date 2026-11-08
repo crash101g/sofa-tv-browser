@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.4-tvcouch.1 (2026-11-08)
+
+- **Clearly an unofficial fork:** the app is called **Sofa (fork)** on the TV, its banner carries a FORK badge, and
+  Settings → About says it is an unofficial fork, not made or supported by Sofa's developer, with links to both
+  projects. README, FORK.md, SECURITY.md and the store listing say the same, and send problem reports to this fork.
+
 ## 1.2.3-tvcouch.1 (2026-11-08)
 
 Fork of Sofa 1.2.2 with features from [TVCouchBrowser](https://github.com/crash101g/tvcouchbrowser); see FORK.md.
