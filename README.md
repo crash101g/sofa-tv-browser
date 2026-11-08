@@ -43,7 +43,7 @@ The app is about 2 MB.
 
 ## Install
 
-Download `sofa-<version>.apk` from the [latest release](https://github.com/sonalder-darlene/sofa-tv-browser/releases/latest)
+Download `sofa-<version>.apk` from the [latest release](https://github.com/crash101g/sofa-tv-browser/releases/latest)
 and install it on the TV, for example with a file manager app or `adb install`. Sofa needs Android 7.0 or newer.
 
 If Play Protect says "App blocked to protect your device", choose **More details → Install anyway**. It says this

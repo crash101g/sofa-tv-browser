@@ -25,10 +25,10 @@ if (!hasReleaseKey) logger.lifecycle("Sofa: no release key configured; release b
 
 /** Where the standard build looks for updates; -Psofa.updateUrl=… points a test build (or a fork) elsewhere. */
 val updateUrl: String = providers.gradleProperty("sofa.updateUrl")
-    .getOrElse("https://api.github.com/repos/sonalder-darlene/sofa-tv-browser/releases/latest")
+    .getOrElse("https://api.github.com/repos/crash101g/sofa-tv-browser/releases/latest")
 /** SHA-256 of the release certificate: only copies signed with it are offered updates, since only they can take one. */
 val releaseCert: String = providers.gradleProperty("sofa.releaseCert")
-    .getOrElse("74e23f09bb4b011600c38e7d555fb38926acc3835029b7fc02e48466c34c8aa9")
+    .getOrElse("4c5fd507719f59f112ebdf10c84ebd353a6fea95427ffec798be8ba7c961f9dd")
 
 /** The commit a test build comes from, for its version name; empty without git (a source tarball, say). */
 val gitCommit: String = runCatching {
